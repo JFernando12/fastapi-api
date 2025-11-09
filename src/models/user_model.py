@@ -1,9 +1,13 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import relationship, Mapped, mapped_column 
+
 from src.database import Base
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
+    id = Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name = Mapped[str] = mapped_column(String, nullable=False)
+    email = Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
+
+    auth = relationship("Auth", back_populates="user", uselist=False)

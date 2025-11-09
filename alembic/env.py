@@ -13,6 +13,8 @@ sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
 
 from src.database.database import Base
 from src.models.user_model import User  # Importar explícitamente los modelos
+from src.models.auth_model import Auth  # Importar explícitamente los modelos
+from src.models.project_model import Project  # Importar explícitamente los modelos
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
