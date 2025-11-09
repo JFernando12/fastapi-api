@@ -6,8 +6,10 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY alembic.ini .
+COPY alembic/ ./alembic/
 COPY src/ ./src/
 
-EXPOSE 8000
+EXPOSE 3000
 
-CMD ["uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "alembic upgrade head && python -m src.main"]

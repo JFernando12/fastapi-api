@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-from .routes import userRouter
-from .database.database import SessionLocal
+from src.routes import userRouter
 
 def create_app() -> FastAPI:
     app = FastAPI()

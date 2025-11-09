@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from ..models.user_model import User
-from ..schemas import UserCreate
+from src.models import User
+from src.schemas import UserCreate
 
 class UserService:
     def get_users(self, db: Session) -> list[dict]:
