@@ -11,3 +11,4 @@ class User(Base):
     email = Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
 
     auth = relationship("Auth", back_populates="user", uselist=False)
+    projects = relationship("Project", back_populates="user")

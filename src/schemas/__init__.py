@@ -1,4 +1,4 @@
-from .user_schema import UserCreate, UserUpdate
-from .project_schema import ProjectCreate
+from .project_schema import ProjectCreate, ProjectUpdate
+from .auth_schema import LoginRequest, RegisterRequest
 
-__all__ = ["UserCreate", "UserUpdate", "ProjectCreate"]
+__all__ = ["ProjectCreate", "ProjectUpdate", "LoginRequest", "RegisterRequest"]

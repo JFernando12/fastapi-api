@@ -2,37 +2,30 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-authRouter = APIRouter(tags=["auth"], prefix="/auth")
+from src.database import get_db
+from src.services import auth_service
+from src.schemas import LoginRequest, RegisterRequest
+from src.utils import success_response
 
-@authRouter.post("/login", status_code=200)
-def login():
-    # Placeholder for login logic
-    return JSONResponse(
-        status_code=200,
-        content={"status": "success", "message": "Login successful"}
-    )
+auth_router = APIRouter(tags=["auth"], prefix="/auth")
 
-@authRouter.post("/register", status_code=201)
-def register():
-    # Placeholder for registration logic
+@auth_router.post("/register", status_code=201)
+def register(user_data: RegisterRequest, db: Session = Depends(get_db)):
+    user = auth_service.register(db, user_data)
+    
+    if not user:
+        raise HTTPException(status_code=400, detail="Registration failed")
+
     return JSONResponse(
         status_code=201,
-        content={"status": "success", "message": "Registration successful"}
+        content=success_response(user, 'User registered successfully')
     )
 
-@authRouter.post("/logout", status_code=200)
-def logout():
-    # Placeholder for logout logic
+@auth_router.post("/login", status_code=200)
+def login(LoginRequest: LoginRequest, db: Session = Depends(get_db)):
+    token = auth_service.login(db, LoginRequest)
+    
     return JSONResponse(
         status_code=200,
-        content={"status": "success", "message": "Logout successful"}
+        content=success_response(token, 'Login successful')
     )
-
-@authRouter.post("/refresh", status_code=200)
-def refresh_token():
-    # Placeholder for token refresh logic
-    return JSONResponse(
-        status_code=200,
-        content={"status": "success", "message": "Token refreshed successfully"}
-    )
-
