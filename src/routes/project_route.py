@@ -56,7 +56,7 @@ def update_project(project_id: str, project_data: ProjectUpdate, user_id: str = 
     project = project_service.update_project(db, user_id=user_id, project_id=project_id, project_data=project_data)
 
     if project is None:
-        raise HTTPException(status_code=400,detail=f"Not able to update the project with id: {project_id}")
+        raise HTTPException(status_code=400, detail=f"Not able to update the project with id: {project_id}")
     
     return JSONResponse(
         status_code=200,
