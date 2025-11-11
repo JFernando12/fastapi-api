@@ -1,9 +1,11 @@
 import bcrypt
+from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from src.config import env
+from src.schemas import JWTPayload
 
 security = HTTPBearer()
 
@@ -19,15 +21,32 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     )
 
 def create_access_token(data: dict, expires_delta: int = 30) -> str:
+    if not env.JWT_SECRET_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="JWT secret key is not configured",
+        )
+    
     to_encode = data.copy()
-    to_encode.update({"exp": expires_delta})
+    expire = datetime.now() + timedelta(minutes=expires_delta)
+    to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, env.JWT_SECRET_KEY, algorithm="HS256")
     return encoded_jwt
 
-def verify_access_token(token: str) -> dict:
+def verify_access_token(token: str) -> JWTPayload:
     try:
+        if not env.JWT_SECRET_KEY:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="JWT secret key is not configured",
+            )
+        
         payload = jwt.decode(token, env.JWT_SECRET_KEY, algorithms=["HS256"])
-        return payload
+        
+        return JWTPayload(
+            sub=payload["sub"],
+            exp=payload["exp"]
+        )
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -37,7 +56,7 @@ def verify_access_token(token: str) -> dict:
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
     token = credentials.credentials
     payload = verify_access_token(token)
-    user_id: str = payload.get("sub")
+    user_id: str = payload["sub"]
 
     if user_id is None:
         raise HTTPException(

@@ -14,7 +14,11 @@ class AuthService:
         db.commit()
         db.refresh(db_user)
         
-        return {"id": db_user.id, "name": db_user.name, "email": db_user.email}
+        return UserResponse(
+            id=db_user.id,
+            name=db_user.name,
+            email=db_user.email
+        )
     
     def login(self, db: Session, user_data: LoginRequest) -> str | None:
         auth = db.query(Auth).join(User).filter(User.email == user_data.email).first()

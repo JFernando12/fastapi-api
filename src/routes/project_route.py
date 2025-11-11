@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from src.services import project_service
-from src.schemas import ProjectCreate
+from src.schemas import ProjectCreate, ProjectUpdate
 from src.database import get_db
 from src.utils import success_response, get_current_user
 
@@ -52,7 +52,7 @@ def delete_project(project_id: str, user_id: str = Depends(get_current_user), db
     )
 
 @project_router.put("/{project_id}", status_code=200)
-def update_project(project_id: str, project_data: ProjectCreate, user_id: str = Depends(get_current_user), db: Session = Depends(get_db)):
+def update_project(project_id: str, project_data: ProjectUpdate, user_id: str = Depends(get_current_user), db: Session = Depends(get_db)):
     project = project_service.update_project(db, user_id=user_id, project_id=project_id, project_data=project_data)
 
     if project is None:
