@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
 
-from src.schemas import LoginRequest, RegisterRequest
+from src.schemas import LoginRequest, RegisterRequest, UserResponse
 from src.models import User, Auth
 from src.utils import hash_password, verify_password, create_access_token
 
 class AuthService:
-    def register(self, db: Session, user_data: RegisterRequest) -> User:
+    def register(self, db: Session, user_data: RegisterRequest) -> UserResponse:
         hashed_password = hash_password(user_data.password)
         db_user = User(name=user_data.name, email=user_data.email)
         db_auth = Auth(password_hash=hashed_password, user=db_user)
@@ -13,7 +13,8 @@ class AuthService:
         db.add(db_auth)
         db.commit()
         db.refresh(db_user)
-        return db_user
+        
+        return {"id": db_user.id, "name": db_user.name, "email": db_user.email}
     
     def login(self, db: Session, user_data: LoginRequest) -> str | None:
         auth = db.query(Auth).join(User).filter(User.email == user_data.email).first()
