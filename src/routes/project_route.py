@@ -20,23 +20,23 @@ def get_projects(user_id: str = Depends(get_current_user), db: Session = Depends
 
 @project_router.get("/{project_id}", status_code=200)
 def get_project(project_id: str, user_id: str = Depends(get_current_user), db: Session = Depends(get_db)):
-    projects = project_service.get_project(db, user_id=user_id, project_id=project_id)
+    project = project_service.get_project(db, user_id=user_id, project_id=project_id)
     
-    if projects is None:
+    if project is None:
         raise HTTPException(status_code=400, detail="Project not found")
     
     return JSONResponse(
         status_code=200,
-        content=success_response(data=projects)
+        content=success_response(data=project)
     )
 
 @project_router.post("/", status_code=201)
 def create_project(project_data: ProjectCreate, user_id: str = Depends(get_current_user), db: Session = Depends(get_db)):
-    projects = project_service.create_project(db, user_id=user_id, project_data=project_data)
+    project = project_service.create_project(db, user_id=user_id, project_data=project_data)
     
     return JSONResponse(
         status_code=201,
-        content=success_response(data=projects, message="Project created successfully")
+        content=success_response(data=project, message="Project created successfully")
     )
 
 @project_router.delete("/{project_id}")
